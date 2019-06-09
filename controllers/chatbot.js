@@ -9,14 +9,19 @@ const sessionPath = sessionClient.sessionPath(
 );
 
 exports.handleResponse = async (req, res) => {
+  try{
+    let parameters = {};
   const request = {
     session: sessionPath,
     queryInput: {
       text: {
-        // The query to send to the dialogflow agent
         text: req.body.text,
-        // The language used by the client (en-US)
         languageCode: config.dialogFlowSessionLanguageCode
+      }
+    },
+    queryParams: {
+      payload: {
+        data: parameters
       }
     }
   };
@@ -24,4 +29,8 @@ exports.handleResponse = async (req, res) => {
   let responses = await sessionClient.detectIntent(request);
 
   res.send(responses[0].queryResult);
+  } catch(e){
+    console.log(e)
+    res.json(e)
+  }
 };
